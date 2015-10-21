@@ -1,0 +1,56 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <!-- Use this Maven settings config file when needing to utilize local Nexus Proxy Repository container -->
+
+  <!-- 
+    Default local maven repository is ~/.m2/repository
+    Its recommended that student's use a fresh local maven repository.
+    If you want to start and use a different local maven repository than your default, then uncomment and modifiy this next line -->
+  <!--localRepository>/u02/maven/defaultrepo</localRepository -->
+
+
+  <profiles>
+    <profile>
+            <id>nexus-public-all</id>
+            <repositories>
+                <repository>
+                    <id>nexus-public-all</id>
+                    <name>Nexus Public repository (all)</name>
+                    <url>http://localhost:8081/content/groups/public/</url>
+                    <layout>default</layout>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>nexus-public-all</id>
+                    <name>Nexus Public repository (all)</name>
+                    <url>http://localhost:8081/content/groups/public/</url>
+                    <layout>default</layout>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>nexus-public-all</activeProfile>
+  </activeProfiles>
+
+</settings>

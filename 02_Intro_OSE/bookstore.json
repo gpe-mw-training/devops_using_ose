@@ -1,0 +1,488 @@
+{
+    "kind": "List",
+    "apiVersion": "v1beta3",
+    "metadata": {},
+    "items": [
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "description": "The web server's http port."
+                },
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "bookstore"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "description": "The web server's https port."
+                },
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "secure-bookstore"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "port": 8443,
+                        "targetPort": 8443
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "bookstore"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "description": "Ping service for clustered applications."
+                },
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore-ping"
+            },
+            "spec": {
+                "portalIP": "None",
+                "ports": [
+                    {
+                        "port": 8888,
+                        "targetPort": 8888
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "bookstore"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "description": "The database server's port."
+                },
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore-mysql"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "port": 3306,
+                        "targetPort": 3306
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "bookstore-mysql"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "id": "bookstore-http-route",
+            "kind": "Route",
+            "metadata": {
+                "annotations": {
+                    "description": "Route for application's http service."
+                },
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore-http-route"
+            },
+            "spec": {
+                "host": "bookstore.jbride-redhat-osedev.cloudapps.mwl.opentlc.com",
+                "to": {
+                    "name": "bookstore"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "id": "bookstore-https-route",
+            "kind": "Route",
+            "metadata": {
+                "annotations": {
+                    "description": "Route for application's https service."
+                },
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore-https-route"
+            },
+            "spec": {
+                "host": "",
+                "tls": {
+                    "termination": "passthrough"
+                },
+                "to": {
+                    "name": "secure-bookstore"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "ImageStream",
+            "metadata": {
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore"
+            },
+            "spec": {
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "bookstore:latest"
+                    }
+                },
+                "source": {
+                    "contextDir": "",
+                    "git": {
+                        "ref": "master",
+                        "uri": "https://github.com/gpe-mw-training/bookstore"
+                    },
+                    "type": "Git"
+                },
+                "strategy": {
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "jboss-eap6-openshift:6.4",
+                            "namespace": "openshift"
+                        },
+                        "env": [
+                          {
+                                "Name": "MAVEN_ARGS",
+                                "Value": "clean package -DskipTests -s config/nexus-hardcoded-settings.xml"
+                          }
+                        ]
+                    },
+                    "type": "Source"
+                },
+                "triggers": [
+                    {
+                        "github": {
+                            "secret": "lfTHrR6e"
+                        },
+                        "type": "GitHub"
+                    },
+                    {
+                        "generic": {
+                            "secret": "ne2qAvF8"
+                        },
+                        "type": "Generic"
+                    },
+                    {
+                        "imageChange": {},
+                        "type": "ImageChange"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore"
+            },
+            "spec": {
+                "replicas": 0,
+                "selector": {
+                    "deploymentConfig": "bookstore"
+                },
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "application": "bookstore",
+                            "deploymentConfig": "bookstore"
+                        },
+                        "name": "bookstore"
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "DB_SERVICE_PREFIX_MAPPING",
+                                        "value": "bookstore-mysql=DB"
+                                    },
+                                    {
+                                        "name": "DB_JNDI",
+                                        "value": "java:/jboss/datasources/mysql"
+                                    },
+                                    {
+                                        "name": "DB_USERNAME",
+                                        "value": "bookstore"
+                                    },
+                                    {
+                                        "name": "DB_PASSWORD",
+                                        "value": "jb0ssredhat"
+                                    },
+                                    {
+                                        "name": "DB_DATABASE",
+                                        "value": "bookstore"
+                                    },
+                                    {
+                                        "name": "TX_DATABASE_PREFIX_MAPPING",
+                                        "value": "bookstore-mysql=DB"
+                                    },
+                                    {
+                                        "name": "DB_MIN_POOL_SIZE",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "DB_MAX_POOL_SIZE",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "DB_TX_ISOLATION",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "OPENSHIFT_DNS_PING_SERVICE_NAME",
+                                        "value": "bookstore-ping"
+                                    },
+                                    {
+                                        "name": "OPENSHIFT_DNS_PING_SERVICE_PORT",
+                                        "value": "8888"
+                                    },
+                                    {
+                                        "name": "EAP_HTTPS_KEYSTORE_DIR",
+                                        "value": "/etc/eap-secret-volume"
+                                    },
+                                    {
+                                        "name": "EAP_HTTPS_KEYSTORE",
+                                        "value": "keystore.jks"
+                                    },
+                                    {
+                                        "name": "EAP_HTTPS_NAME",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "EAP_HTTPS_PASSWORD",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "HORNETQ_CLUSTER_PASSWORD",
+                                        "value": "PRDqNd3T"
+                                    },
+                                    {
+                                        "name": "HORNETQ_QUEUES",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "HORNETQ_TOPICS",
+                                        "value": ""
+                                    }
+                                ],
+                                "image": "bookstore",
+                                "imagePullPolicy": "Always",
+                                "name": "bookstore",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "name": "http",
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8443,
+                                        "name": "https",
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8888,
+                                        "name": "ping",
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/bash",
+                                            "-c",
+                                            "/opt/eap/bin/readinessProbe.sh"
+                                        ]
+                                    }
+                                },
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/etc/eap-secret-volume",
+                                        "name": "eap-keystore-volume",
+                                        "readOnly": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "serviceAccount": "eap-service-account",
+                        "volumes": [
+                            {
+                                "name": "eap-keystore-volume",
+                                "secret": {
+                                    "secretName": "eap-app-secret"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "triggers": [
+                    {
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "bookstore"
+                            ],
+                            "from": {
+                                "kind": "ImageStream",
+                                "name": "bookstore"
+                            }
+                        },
+                        "type": "ImageChange"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "labels": {
+                    "application": "bookstore",
+                    "template": "eap6-mysql-sti"
+                },
+                "name": "bookstore-mysql"
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "deploymentConfig": "bookstore-mysql"
+                },
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "application": "bookstore",
+                            "deploymentConfig": "bookstore-mysql"
+                        },
+                        "name": "bookstore-mysql"
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "value": "bookstore"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "jb0ssredhat"
+                                    },
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "bookstore"
+                                    },
+                                    {
+                                        "name": "MYSQL_LOWER_CASE_TABLE_NAMES",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "MYSQL_MAX_CONNECTIONS",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "MYSQL_FT_MIN_WORD_LEN",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "MYSQL_FT_MAX_WORD_LEN",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "MYSQL_AIO",
+                                        "value": ""
+                                    }
+                                ],
+                                "image": "mysql",
+                                "imagePullPolicy": "Always",
+                                "name": "bookstore-mysql",
+                                "ports": [
+                                    {
+                                        "containerPort": 3306,
+                                        "protocol": "TCP"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "triggers": [
+                    {
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "bookstore-mysql"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "mysql:latest",
+                                "namespace": "openshift"
+                            }
+                        },
+                        "type": "ImageChange"
+                    }
+                ]
+            }
+        }
+    ]
+}
