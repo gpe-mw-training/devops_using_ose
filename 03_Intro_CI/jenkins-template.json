@@ -85,7 +85,7 @@
             "containers": [
               {
                 "name": "jenkins",
-                "image": "jbride/jenkins-ose-dev:latest",
+                "image": "rhtgptetraining/jenkins-ose-dev:latest",
                 "env": [
                   {
                     "name": "JENKINS_PASSWORD",
