@@ -47,7 +47,6 @@
         "creationTimestamp": null
       },
       "spec": {
-        "host": "jenkins.<REPLACE_ME_PLEASE>-osedev.cloudapps.mwl.opentlc.com",
         "to": {
           "kind": "Service",
           "name": "${JENKINS_SERVICE_NAME}"
