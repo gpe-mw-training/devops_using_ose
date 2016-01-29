@@ -119,7 +119,7 @@
                 "name": "bookstore-http-route"
             },
             "spec": {
-                "host": "bookstore.jbride-redhat-osedev.cloudapps.mwl.opentlc.com",
+                "host": "",
                 "to": {
                     "name": "bookstore"
                 }
@@ -407,7 +407,7 @@
                 "name": "bookstore-mysql"
             },
             "spec": {
-                "replicas": 1,
+                "replicas": 0,
                 "selector": {
                     "deploymentConfig": "bookstore-mysql"
                 },
