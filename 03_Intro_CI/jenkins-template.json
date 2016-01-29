@@ -85,7 +85,7 @@
             "containers": [
               {
                 "name": "jenkins",
-                "image": "rhtgptetraining/jenkins-ose-dev:latest",
+                "image": "infranode00-mwl.localdomain:5000/redhat-gpe/jenkins-ose-dev:latest",
                 "env": [
                   {
                     "name": "JENKINS_PASSWORD",
