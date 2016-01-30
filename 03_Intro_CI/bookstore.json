@@ -198,7 +198,7 @@
                                 "Value": "true"
                           }, {
                                 "Name": "APPLICATION_ARTIFACT_URL",
-                                "Value": "http://jenkins.jbride-redhat-osedev.cloudapps.mwl.opentlc.com/job/bookstore/lastSuccessfulBuild/artifact/target/bookstore.war"
+                                "Value": "http://jenkins-rh-jbride-redhat-com-devops-using-ose.mwl.opentlc.com/job/bookstore/lastSuccessfulBuild/artifact/target/bookstore.war"
                           }, {
                                 "Name": "DOWNLOAD_USER_CREDENTIALS",
                                 "Value": "admin:password"
