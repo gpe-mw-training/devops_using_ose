@@ -159,26 +159,6 @@
                                     }
                                 ],
                                 "env": [
-                                    {
-                                        "name": "DATABASE_SERVICE_NAME",
-                                        "value": "${DATABASE_SERVICE_NAME}"
-                                    },
-                                    {
-                                        "name": "MONGODB_USER",
-                                        "value": "${MONGODB_USER}"
-                                    },
-                                    {
-                                        "name": "MONGODB_PASSWORD",
-                                        "value": "${MONGODB_PASSWORD}"
-                                    },
-                                    {
-                                        "name": "MONGODB_DATABASE",
-                                        "value": "${MONGODB_DATABASE}"
-                                    },
-                                    {
-                                        "name": "MONGODB_ADMIN_PASSWORD",
-                                        "value": "${MONGODB_ADMIN_PASSWORD}"
-                                    }
                                 ]
                             }
                         ]
@@ -211,26 +191,6 @@
             "description": "A secret string used to configure the GitHub webhook",
             "generate": "expression",
             "from": "[a-zA-Z0-9]{40}"
-        },
-        {
-            "name": "DATABASE_SERVICE_NAME",
-            "description": "Database service name"
-        },
-        {
-            "name": "MONGODB_USER",
-            "description": "Username for MongoDB user that will be used for accessing the database"
-        },
-        {
-            "name": "MONGODB_PASSWORD",
-            "description": "Password for the MongoDB user"
-        },
-        {
-            "name": "MONGODB_DATABASE",
-            "description": "Database name"
-        },
-        {
-            "name": "MONGODB_ADMIN_PASSWORD",
-            "description": "Password for the database admin user"
         }
     ],
     "labels": {
