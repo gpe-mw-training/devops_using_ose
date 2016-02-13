@@ -1,0 +1,166 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "deployment-example-template.json",
+        "creationTimestamp": null
+    },
+    "objects": [
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "deployment-example-is",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "v1",
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "openshift/deployment-example:v1"
+                        }
+                    },
+                    {
+                        "name": "v2",
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "openshift/deployment-example:v2"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "deployment-example",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "deployment-example"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                }
+            },
+            "spec": {
+                "replicas": 5,
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 5,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 600,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "deployment-example"
+                            ],
+                            "from": {
+                                "kind": "ImageStream",
+                                "name": "deployment-example-is:v1"
+                            }
+                        }
+                    }
+                ],
+                "selector": {
+                    "app": "deployment-example",
+                    "deploymentconfig": "deployment-example"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "deployment-example",
+                            "deploymentconfig": "deployment-example"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "OpenShiftNewApp"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "deployment-example",
+                                "image": "openshift/deployment-example:v1",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {}
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "deployment-example",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "deployment-example"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8080-tcp",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "app": "deployment-example",
+                    "deploymentconfig": "deployment-example"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "deployment-example"
+            },
+            "spec": {
+                "to": {
+                    "kind": "Service",
+                    "name": "deployment-example"
+                }
+            }
+        }
+    ]
+}
