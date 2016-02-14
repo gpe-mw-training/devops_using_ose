@@ -1,0 +1,91 @@
+stage 'Build'
+node {
+    echo "Groovy:  Build stage:  ";
+    checkPort("gitlab", "22");
+    git url: 'https://github.com/gpe-mw-training/session-replication.git', credentialsId: ''
+    def version = getBuildVersion("pom.xml")
+    env.BUILD_VERSION = version
+    env.BUILD_GROUP_ID = getGroupIdFromPom("pom.xml")
+    env.BUILD_ARTIFACT_ID = getArtifactIdFromPom("pom.xml")
+    def branch = 'build-' + version
+    env.BUILD_BRANCH = branch
+    prepareBuild(version, branch)
+    build()
+    stash excludes: 'target/', includes: '**', name: 'source'
+}
+
+stage 'Integrate'
+node {
+    unstash 'source'
+    integrationTests()    
+}
+
+stage 'Publish'
+node {
+    unstash 'source'
+    publishToNexusAndCommitBranch(env.BUILD_VERSION, env.BUILD_BRANCH)
+}
+
+stage 'QA'
+node {
+    checkPort("eapqa", "8080");
+    deployToJBossEAP("eapqa:8080")
+}
+
+stage 'Approve'
+timeout(time: 2, unit: 'DAYS') {
+    input message: 'Do you want to deploy into production?'
+}
+
+stage 'Production'
+node {
+    checkPort("eapprod", "8080");
+    deployToJBossEAP("eapprod:8080")
+}
+
+def checkPort(server, port) {
+    sh "checkPort.sh ${server} ${port}"
+}
+
+def prepareBuild(version, branch) {
+    sh "git checkout -b ${branch}"
+    sh "mvn -f policyquote/pom.xml versions:set -DgenerateBackupPoms=false -DnewVersion=${version}"
+}
+
+def build() {   
+    sh "mvn -f policyquote/pom.xml clean package"
+}
+
+def integrationTests() {
+    sh "mvn -f policyquote/pom.xml verify"
+}
+
+def publishToNexusAndCommitBranch(version, branch) {
+        checkPort("nexus", "8080");
+        sh "mvn -f policyquote/pom.xml deploy -DaltDeploymentRepository=internal.nexus::default::http://nexus:8080/nexus/content/repositories/releases"
+        def commit = "Build " + version
+        sh "git add **/pom.xml && git commit -m \"${commit}\" && git push origin ${branch}"
+}
+
+def deployToJBossEAP(server) {
+    sh "oc "
+}
+
+def getVersionFromPom(pom) {
+  def matcher = readFile(pom) =~ '<version>(.+)</version>'
+  matcher ? matcher[0][1] : null
+ }
+
+def getGroupIdFromPom(pom) {
+  def matcher = readFile(pom) =~ '<groupId>(.+)</groupId>'
+  matcher ? matcher[0][1] : null
+ }
+
+def getArtifactIdFromPom(pom) {
+  def matcher = readFile(pom) =~ '<artifactId>(.+)</artifactId>'
+  matcher ? matcher[0][1] : null
+ }
+
+def String getBuildVersion(pom) {
+  return getVersionFromPom(pom).minus("-SNAPSHOT") + '.' + env.BUILD_NUMBER
+}
