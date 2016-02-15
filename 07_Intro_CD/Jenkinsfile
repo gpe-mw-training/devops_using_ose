@@ -69,12 +69,10 @@ def integrationTests() {
 }
 
 def publishToNexusAndCommitBranch(version, branch) {
-    /*
-    checkPort("nexus", "8080");
-    sh "mvn -f pom.xml deploy -DaltDeploymentRepository=internal.nexus::default::http://nexus:8080/nexus/content/repositories/releases"
-    def commit = "Build " + version
-    sh "git add **/pom.xml && git commit -m \"${commit}\" && git push origin ${branch}"
-    */
+    //checkPort("nexus", "8080");
+    //sh "mvn -f pom.xml deploy -DaltDeploymentRepository=internal.nexus::default::http://nexus:8080/nexus/content/repositories/releases"
+    //def commit = "Build " + version
+    //sh "git add **/pom.xml && git commit -m \"${commit}\" && git push origin ${branch}"
 }
 
 def deployToJBossEAP(server) {
