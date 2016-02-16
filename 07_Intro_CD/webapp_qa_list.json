@@ -1,0 +1,208 @@
+{
+    "kind": "List",
+    "apiVersion": "v1beta3",
+    "metadata": {},
+    "items": [
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "description": "The web server's http port."
+                },
+                "labels": {
+                    "application": "webapp-qa",
+                    "template": "eap6-basic-sti"
+                },
+                "name": "webapp-qa"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "webapp-qa"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "id": "webapp-qa-http-route",
+            "kind": "Route",
+            "metadata": {
+                "annotations": {
+                    "description": "Route for application's http service."
+                },
+                "labels": {
+                    "application": "webapp-qa",
+                    "template": "eap6-basic-sti"
+                },
+                "name": "webapp-qa-http-route"
+            },
+            "spec": {
+                "host": "",
+                "to": {
+                    "name": "webapp-qa"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "ImageStream",
+            "metadata": {
+                "labels": {
+                    "application": "webapp-qa",
+                    "template": "eap6-basic-sti"
+                },
+                "name": "webapp-qa"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "labels": {
+                    "application": "webapp-qa",
+                    "template": "eap6-basic-sti"
+                },
+                "name": "webapp-qa"
+            },
+            "spec": {
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "webapp-qa:latest"
+                    }
+                },
+                "source": {
+                    "contextDir": "",
+                    "git": {
+                        "ref": "master",
+                        "uri": "https://github.com/gpe-mw-training/session-replication"
+                    },
+                    "type": "Git"
+                },
+                "strategy": {
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "jboss-eap64-openshift:latest",
+                            "namespace": "openshift"
+                        },
+			"env": [
+      			  {
+        			"Name": "MAVEN_ARGS",
+        			"Value": "clean package -DskipTests -s maven/nexus-hardcoded-settings.xml"
+      			  }
+    			]
+                    },
+                    "type": "Source"
+                },
+                "triggers": [
+                    {
+                        "github": {
+                            "secret": "RiaxUMKv"
+                        },
+                        "type": "GitHub"
+                    },
+                    {
+                        "generic": {
+                            "secret": "rBRvI8v6"
+                        },
+                        "type": "Generic"
+                    },
+                    {
+                        "imageChange": {},
+                        "type": "ImageChange"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "labels": {
+                    "application": "webapp-qa",
+                    "template": "eap6-basic-sti"
+                },
+                "name": "webapp-qa"
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "deploymentConfig": "webapp-qa"
+                },
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "application": "webapp-qa",
+                            "deploymentConfig": "webapp-qa"
+                        },
+                        "name": "webapp-qa"
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "HORNETQ_CLUSTER_PASSWORD",
+                                        "value": "SuMnXIWS"
+                                    },
+                                    {
+                                        "name": "HORNETQ_QUEUES",
+                                        "value": ""
+                                    },
+                                    {
+                                        "name": "HORNETQ_TOPICS",
+                                        "value": ""
+                                    }
+                                ],
+                                "image": "webapp-qa",
+                                "imagePullPolicy": "Always",
+                                "name": "webapp-qa",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "name": "http",
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/bash",
+                                            "-c",
+                                            "/opt/eap/bin/readinessProbe.sh"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "triggers": [
+                    {
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "webapp-qa"
+                            ],
+                            "from": {
+                                "kind": "ImageStream",
+                                "name": "webapp-qa"
+                            }
+                        },
+                        "type": "ImageChange"
+                    }
+                ]
+            }
+        }
+    ]
+}
