@@ -93,10 +93,16 @@
                             "namespace": "openshift"
                         },
 			"env": [
-      			  {
-        			"Name": "MAVEN_ARGS",
-        			"Value": "clean package -DskipTests -s maven/nexus-hardcoded-settings.xml"
-      			  }
+                            {
+                                "Name": "DISABLE_ASSET_COMPILATION",
+                                "Value": "true"
+                            }, {
+                                "Name": "APPLICATION_ARTIFACT_URL",
+                                "Value": "http://${JENKINS_ROUTE}/job/session-replication-pipeline-cd/lastSuccessfulBuild/artifact/target/session-replication.war"
+                            }, {
+                                "Name": "DOWNLOAD_USER_CREDENTIALS",
+                                "Value": "admin:password"
+                            }
     			]
                     },
                     "type": "Source"
