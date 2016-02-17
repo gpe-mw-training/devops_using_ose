@@ -51,7 +51,7 @@ def checkPort(server, port) {
 
 def prepareBuild(version, branch) {
     sh "git checkout -b ${branch}"
-    sh "mvn -f pom.xml versions:set -DgenerateBackupPoms=false -DnewVersion=${version} -s config/nexus-hardcoded-settings.xml"
+    sh "mvn -f pom.xml versions:set -DgenerateBackupPoms=false -DnewVersion=${version} -DOSE_NEXUS_HOST=inf00-mwl.opentlc.com"
 }
 
 def build() {   
