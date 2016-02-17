@@ -1,8 +1,13 @@
 {
-    "kind": "List",
-    "apiVersion": "v1beta3",
-    "metadata": {},
-    "items": [
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "web-app-template"
+    },
+    "labels": {
+        "template": "web-app-template"
+    },
+    "objects": [
         {
             "apiVersion": "v1",
             "kind": "Service",
@@ -11,10 +16,10 @@
                     "description": "The web server's http port."
                 },
                 "labels": {
-                    "application": "webapp-prod",
+                    "application": "webapp-${RUNTIME_ENVIRONMENT}",
                     "template": "eap6-basic-sti"
                 },
-                "name": "webapp-prod"
+                "name": "webapp-${RUNTIME_ENVIRONMENT}"
             },
             "spec": {
                 "ports": [
@@ -24,28 +29,28 @@
                     }
                 ],
                 "selector": {
-                    "deploymentConfig": "webapp-prod"
+                    "deploymentConfig": "webapp-${RUNTIME_ENVIRONMENT}"
                 }
             }
         },
         {
             "apiVersion": "v1",
-            "id": "webapp-prod-http-route",
+            "id": "webapp-${RUNTIME_ENVIRONMENT}-http-route",
             "kind": "Route",
             "metadata": {
                 "annotations": {
                     "description": "Route for application's http service."
                 },
                 "labels": {
-                    "application": "webapp-prod",
+                    "application": "webapp-${RUNTIME_ENVIRONMENT}",
                     "template": "eap6-basic-sti"
                 },
-                "name": "webapp-prod-http-route"
+                "name": "webapp-${RUNTIME_ENVIRONMENT}-http-route"
             },
             "spec": {
                 "host": "",
                 "to": {
-                    "name": "webapp-prod"
+                    "name": "webapp-${RUNTIME_ENVIRONMENT}"
                 }
             }
         },
@@ -54,10 +59,10 @@
             "kind": "ImageStream",
             "metadata": {
                 "labels": {
-                    "application": "webapp-prod",
+                    "application": "webapp-${RUNTIME_ENVIRONMENT}",
                     "template": "eap6-basic-sti"
                 },
-                "name": "webapp-prod"
+                "name": "webapp-${RUNTIME_ENVIRONMENT}"
             }
         },
         {
@@ -65,16 +70,16 @@
             "kind": "BuildConfig",
             "metadata": {
                 "labels": {
-                    "application": "webapp-prod",
+                    "application": "webapp-${RUNTIME_ENVIRONMENT}",
                     "template": "eap6-basic-sti"
                 },
-                "name": "webapp-prod"
+                "name": "webapp-${RUNTIME_ENVIRONMENT}"
             },
             "spec": {
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "webapp-prod:latest"
+                        "name": "webapp-${RUNTIME_ENVIRONMENT}:latest"
                     }
                 },
                 "source": {
@@ -132,15 +137,15 @@
             "kind": "DeploymentConfig",
             "metadata": {
                 "labels": {
-                    "application": "webapp-prod",
+                    "application": "webapp-${RUNTIME_ENVIRONMENT}",
                     "template": "eap6-basic-sti"
                 },
-                "name": "webapp-prod"
+                "name": "webapp-${RUNTIME_ENVIRONMENT}"
             },
             "spec": {
                 "replicas": 1,
                 "selector": {
-                    "deploymentConfig": "webapp-prod"
+                    "deploymentConfig": "webapp-${RUNTIME_ENVIRONMENT}"
                 },
                 "strategy": {
                     "type": "Recreate"
@@ -148,10 +153,10 @@
                 "template": {
                     "metadata": {
                         "labels": {
-                            "application": "webapp-prod",
-                            "deploymentConfig": "webapp-prod"
+                            "application": "webapp-${RUNTIME_ENVIRONMENT}",
+                            "deploymentConfig": "webapp-${RUNTIME_ENVIRONMENT}"
                         },
-                        "name": "webapp-prod"
+                        "name": "webapp-${RUNTIME_ENVIRONMENT}"
                     },
                     "spec": {
                         "containers": [
@@ -170,9 +175,9 @@
                                         "value": ""
                                     }
                                 ],
-                                "image": "webapp-prod",
+                                "image": "webapp-${RUNTIME_ENVIRONMENT}",
                                 "imagePullPolicy": "Always",
-                                "name": "webapp-prod",
+                                "name": "webapp-${RUNTIME_ENVIRONMENT}",
                                 "ports": [
                                     {
                                         "containerPort": 8080,
@@ -198,17 +203,29 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "webapp-prod"
+                                "webapp-${RUNTIME_ENVIRONMENT}"
                             ],
                             "from": {
                                 "kind": "ImageStream",
-                                "name": "webapp-prod"
+                                "name": "webapp-${RUNTIME_ENVIRONMENT}"
                             }
                         },
                         "type": "ImageChange"
                     }
                 ]
             }
+        }
+    ],
+    "parameters": [
+        {   
+            "name": "RUNTIME_ENVIRONMENT",
+            "description": "specify: dev, qa or prod",
+            "required": true
+        },      
+        {
+            "name": "JENKINS_ROUTE",
+            "description": "Jenkins route",
+            "required": true
         }
     ]
 }

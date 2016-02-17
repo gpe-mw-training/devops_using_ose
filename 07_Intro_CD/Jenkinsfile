@@ -16,7 +16,9 @@ node {
 stage 'Integrate'
 node {
     unstash 'source'
-    integrationTests()    
+
+    # This is where integration tests would be executed
+    # integrationTests()    
 }
 
 stage 'Publish'
@@ -30,7 +32,7 @@ node {
 
 stage 'QA'
 node {
-    deployToJBossEAP("eapqa:8080")
+    deployToJBossEAP("webapp-qa")
 }
 
 stage 'Approve'
@@ -40,7 +42,7 @@ timeout(time: 2, unit: 'DAYS') {
 
 stage 'Production'
 node {
-    deployToJBossEAP("eapprod:8080")
+    deployToJBossEAP("webapp-prod")
 }
 
 def checkPort(server, port) {
@@ -53,7 +55,7 @@ def prepareBuild(version, branch) {
 }
 
 def build() {   
-    sh "mvn -f pom.xml clean package"
+    sh "mvn clean package -DskipTests -s maven/nexus-hardcoded-settings.xml"
 }
 
 def integrationTests() {
@@ -67,7 +69,7 @@ def publishToNexusAndCommitBranch(version, branch) {
 }
 
 def deployToJBossEAP(server) {
-    sh "oc "
+    sh "oc_build_deploy.sh ${OPENSHIFT_API_URL} ${PROJECT} ${BUILD_CONFIG_QA}"
 }
 
 def getVersionFromPom(pom) {
