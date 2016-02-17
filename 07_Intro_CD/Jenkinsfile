@@ -69,6 +69,9 @@ def publishToNexusAndCommitBranch(version, branch) {
 }
 
 def deployToJBossEAP(buildConfig) {
+    echo "OPENSHIFT_API_URL = $OPENSHIFT_API_URL"
+    echo "PROJECT = $PROJECT"
+    echo "BUILD_CONFIG = ${buildConfig}
     sh "oc_build_deploy.sh ${OPENSHIFT_API_URL} ${PROJECT} ${buildConfig}"
 }
 
