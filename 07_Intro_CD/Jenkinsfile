@@ -51,7 +51,7 @@ def checkPort(server, port) {
 
 def prepareBuild(version, branch) {
     sh "git checkout -b ${branch}"
-    sh "mvn -f pom.xml versions:set -DgenerateBackupPoms=false -DnewVersion=${version}"
+    sh "mvn -f pom.xml versions:set -DgenerateBackupPoms=false -DnewVersion=${version} -s config/nexus-hardcoded-settings.xml"
 }
 
 def build() {   
