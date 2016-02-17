@@ -17,8 +17,8 @@ stage 'Integrate'
 node {
     unstash 'source'
 
-    # This is where integration tests would be executed
-    # integrationTests()    
+    // This is where integration tests would be executed
+    // integrationTests()    
 }
 
 stage 'Publish'
