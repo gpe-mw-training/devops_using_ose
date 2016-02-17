@@ -68,8 +68,8 @@ def publishToNexusAndCommitBranch(version, branch) {
     sh "git add **/pom.xml && git commit -m \"${commit}\" && git push origin ${branch}"
 }
 
-def deployToJBossEAP(server) {
-    sh "oc_build_deploy.sh ${OPENSHIFT_API_URL} ${PROJECT} ${BUILD_CONFIG_QA}"
+def deployToJBossEAP(buildConfig) {
+    sh "oc_build_deploy.sh ${OPENSHIFT_API_URL} ${PROJECT} ${buildConfig}"
 }
 
 def getVersionFromPom(pom) {
