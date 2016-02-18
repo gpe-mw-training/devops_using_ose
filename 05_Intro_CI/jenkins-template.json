@@ -12,6 +12,25 @@
   },
   "objects": [
     {
+        "kind": "ImageStream",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": "jenkins-dev-is",
+            "creationTimestamp": null
+        },
+        "spec": {
+            "tags": [
+                {
+                    "name": "latest",
+                    "from": {
+                        "kind": "DockerImage",
+                        "name": "infranode00-mwl.localdomain:5000/redhat-gpe/jenkins-ose-dev:latest"
+                    }
+                }
+            ]
+        }
+    },
+    {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
@@ -68,6 +87,19 @@
         "triggers": [
           {
             "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+                "automatic": true,
+                "containerNames": [
+                   "jenkins"
+                ],
+                "from": {
+                   "kind": "ImageStream",
+                   "name": "jenkins-dev-is"
+                }
+             }
           }
         ],
         "replicas": 1,

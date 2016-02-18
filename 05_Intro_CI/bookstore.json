@@ -1,8 +1,13 @@
 {
-    "kind": "List",
-    "apiVersion": "v1beta3",
-    "metadata": {},
-    "items": [
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "bookstore-template"
+    },
+    "labels": {
+        "template": "bookstore-template"
+    },
+    "objects": [
         {
             "apiVersion": "v1",
             "kind": "Service",
@@ -198,7 +203,7 @@
                                 "Value": "true"
                           }, {
                                 "Name": "APPLICATION_ARTIFACT_URL",
-                                "Value": "http://jenkins-rh-jbride-redhat-com-devops-using-ose.mwl.opentlc.com/job/bookstore/lastSuccessfulBuild/artifact/target/bookstore.war"
+                                "Value": "http://${JENKINS_ROUTE}/job/bookstore/lastSuccessfulBuild/artifact/target/bookstore.war"
                           }, {
                                 "Name": "DOWNLOAD_USER_CREDENTIALS",
                                 "Value": "admin:password"
@@ -489,6 +494,14 @@
                     }
                 ]
             }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "JENKINS_ROUTE",
+            "description": "Jenkins route",
+            "value": "jenkins_route_OVER_RIDE_ME",
+            "required": true
         }
     ]
 }
