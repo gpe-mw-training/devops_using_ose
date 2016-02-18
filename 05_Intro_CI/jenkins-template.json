@@ -96,8 +96,8 @@
                    "jenkins"
                 ],
                 "from": {
-                   "kind": "ImageStream",
-                   "name": "jenkins-dev-is"
+                   "kind": "ImageStreamTag",
+                   "name": "jenkins-dev-is:latest"
                 }
              }
           }
