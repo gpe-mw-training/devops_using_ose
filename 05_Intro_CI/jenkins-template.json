@@ -87,19 +87,6 @@
         "triggers": [
           {
             "type": "ConfigChange"
-          },
-          {
-            "type": "ImageChange",
-            "imageChangeParams": {
-                "automatic": true,
-                "containerNames": [
-                   "jenkins"
-                ],
-                "from": {
-                   "kind": "ImageStreamTag",
-                   "name": "jenkins-dev-is:latest"
-                }
-             }
           }
         ],
         "replicas": 1,
