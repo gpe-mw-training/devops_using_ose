@@ -224,7 +224,7 @@
         },      
         {
             "name": "JENKINS_ROUTE",
-            "description": "Jenkins route",
+            "description": "Indicates to JEE S2I where to locate the last successfully built web archive",
             "required": true
         }
     ]
