@@ -11,10 +11,10 @@
                     "description": "The web server's http port."
                 },
                 "labels": {
-                    "application": "session-replication",
+                    "application": "srep",
                     "template": "eap6-basic-sti"
                 },
-                "name": "session-replication"
+                "name": "srep"
             },
             "spec": {
                 "ports": [
@@ -24,7 +24,7 @@
                     }
                 ],
                 "selector": {
-                    "deploymentConfig": "session-replication"
+                    "deploymentConfig": "srep"
                 }
             }
         },
@@ -36,10 +36,10 @@
                     "description": "Ping service for clustered applications."
                 },
                 "labels": {
-                    "application": "session-replication",
+                    "application": "srep",
                     "template": "eap6-basic-sti"
                 },
-                "name": "session-replication-ping"
+                "name": "srep-ping"
             },
             "spec": {
                 "portalIP": "None",
@@ -50,28 +50,28 @@
                     }
                 ],
                 "selector": {
-                    "deploymentConfig": "session-replication"
+                    "deploymentConfig": "srep"
                 }
             }
         },
         {
             "apiVersion": "v1",
-            "id": "session-replication-http-route",
+            "id": "srep-http-route",
             "kind": "Route",
             "metadata": {
                 "annotations": {
                     "description": "Route for application's http service."
                 },
                 "labels": {
-                    "application": "session-replication",
+                    "application": "srep",
                     "template": "eap6-basic-sti"
                 },
-                "name": "session-replication-http-route"
+                "name": "srep-http-route"
             },
             "spec": {
                 "host": "",
                 "to": {
-                    "name": "session-replication"
+                    "name": "srep"
                 }
             }
         },
@@ -80,10 +80,10 @@
             "kind": "ImageStream",
             "metadata": {
                 "labels": {
-                    "application": "session-replication",
+                    "application": "srep",
                     "template": "eap6-basic-sti"
                 },
-                "name": "session-replication"
+                "name": "srep"
             }
         },
         {
@@ -91,16 +91,16 @@
             "kind": "BuildConfig",
             "metadata": {
                 "labels": {
-                    "application": "session-replication",
+                    "application": "srep",
                     "template": "eap6-basic-sti"
                 },
-                "name": "session-replication"
+                "name": "srep"
             },
             "spec": {
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "session-replication:latest"
+                        "name": "srep:latest"
                     }
                 },
                 "source": {
@@ -152,15 +152,15 @@
             "kind": "DeploymentConfig",
             "metadata": {
                 "labels": {
-                    "application": "session-replication",
+                    "application": "srep",
                     "template": "eap6-basic-sti"
                 },
-                "name": "session-replication"
+                "name": "srep"
             },
             "spec": {
                 "replicas": 0,
                 "selector": {
-                    "deploymentConfig": "session-replication"
+                    "deploymentConfig": "srep"
                 },
                 "strategy": {
                     "type": "Recreate"
@@ -168,10 +168,10 @@
                 "template": {
                     "metadata": {
                         "labels": {
-                            "application": "session-replication",
-                            "deploymentConfig": "session-replication"
+                            "application": "srep",
+                            "deploymentConfig": "srep"
                         },
-                        "name": "session-replication"
+                        "name": "srep"
                     },
                     "spec": {
                         "containers": [
@@ -179,7 +179,7 @@
                                 "env": [
                                     {
                                         "name": "OPENSHIFT_DNS_PING_SERVICE_NAME",
-                                        "value": "session-replication-ping"
+                                        "value": "srep-ping"
                                     },
                                     {
                                         "name": "OPENSHIFT_DNS_PING_SERVICE_PORT",
@@ -198,9 +198,9 @@
                                         "value": ""
                                     }
                                 ],
-                                "image": "session-replication",
+                                "image": "srep",
                                 "imagePullPolicy": "Always",
-                                "name": "session-replication",
+                                "name": "srep",
                                 "ports": [
                                     {
                                         "containerPort": 8080,
@@ -231,11 +231,11 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "session-replication"
+                                "srep"
                             ],
                             "from": {
                                 "kind": "ImageStream",
-                                "name": "session-replication"
+                                "name": "srep"
                             }
                         },
                         "type": "ImageChange"
