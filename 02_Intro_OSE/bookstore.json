@@ -119,7 +119,7 @@
                 "name": "bookstore-http-route"
             },
             "spec": {
-                "host": "bookstore.jbride-redhat-osedev.cloudapps.mwl.opentlc.com",
+                "host": "bookstore.jbride-redhat-osedev.cloudapps.ml.opentlc.com",
                 "to": {
                     "name": "bookstore"
                 }
