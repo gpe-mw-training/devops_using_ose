@@ -24,7 +24,7 @@
                     "name": "latest",
                     "from": {
                         "kind": "DockerImage",
-                        "name": "infranode00-mwl.localdomain:5000/redhat-gpe/jenkins-ose-dev:latest"
+                        "name": "${MASTER_NODE_HOSTNAME_PORT}/redhat-gpe/jenkins-ose-dev:latest"
                     }
                 }
             ]
@@ -104,7 +104,7 @@
             "containers": [
               {
                 "name": "jenkins",
-                "image": "infranode00-mwl.localdomain:5000/redhat-gpe/jenkins-ose-dev:latest",
+                "image": "${MASTER_NODE_HOSTNAME_PORT}/redhat-gpe/jenkins-ose-dev:latest",
                 "env": [
                   {
                     "name": "JENKINS_PASSWORD",
@@ -154,6 +154,11 @@
       "description": "Password for the Jenkins user",
       "generate": "expression",
       "value": "password"
+    },
+    {
+      "name": "MASTER_NODE_HOSTNAME_PORT",
+      "description": "OSE3 master node hostname and port",
+      "value": "infranode00-ml.localdomain:5000"
     }
   ],
   "labels": {
