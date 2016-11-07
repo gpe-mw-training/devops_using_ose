@@ -86,7 +86,7 @@
                     "contextDir": "",
                     "git": {
                         "ref": "master",
-                        "uri": "https://github.com/gpe-mw-training/session-replication"
+                        "uri": "https://github.com/wkulhanek/ocp-session-replication"
                     },
                     "type": "Git"
                 },
