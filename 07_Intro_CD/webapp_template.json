@@ -99,14 +99,14 @@
                         },
 			"env": [
                             {
-                                "Name": "DISABLE_ASSET_COMPILATION",
-                                "Value": "true"
+                                "name": "DISABLE_ASSET_COMPILATION",
+                                "value": "true"
                             }, {
-                                "Name": "APPLICATION_ARTIFACT_URL",
-                                "Value": "http://${JENKINS_ROUTE}/job/session-replication/lastSuccessfulBuild/artifact/target/session-replication.war"
+                                "name": "APPLICATION_ARTIFACT_URL",
+                                "value": "http://${JENKINS_ROUTE}/job/session-replication/lastSuccessfulBuild/artifact/target/session-replication.war"
                             }, {
-                                "Name": "DOWNLOAD_USER_CREDENTIALS",
-                                "Value": "admin:password"
+                                "name": "DOWNLOAD_USER_CREDENTIALS",
+                                "value": "admin:admin123"
                             }
     			]
                     },
